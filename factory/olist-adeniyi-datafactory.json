@@ -1,0 +1,9 @@
+{
+	"name": "olist-adeniyi-datafactory",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "bee7fd05-ca9d-4c12-a825-66daea1868ca",
+		"tenantId": "51ef35fc-1970-4501-b2ae-d08a522580fc"
+	}
+}
