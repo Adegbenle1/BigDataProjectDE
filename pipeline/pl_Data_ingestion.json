@@ -3,8 +3,10 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DatafromGithub",
+				"name": "Copy dataTest",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -48,18 +50,137 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "githubdatacsv",
+						"referenceName": "DataFromGithubViaLinkedService",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DataLake_olist",
+						"referenceName": "CSVFromLinkedServiceToLink",
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.forEachInput",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "CopyinsideForEach",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DataFromGithubViaLinkedService",
+									"type": "DatasetReference",
+									"parameters": {
+										"csv_relative_url": {
+											"value": "@item().csv_relative_url",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "CSVFromLinkedServiceToLink",
+									"type": "DatasetReference",
+									"parameters": {
+										"file_name": {
+											"value": "@item().file_name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
 			}
 		],
+		"parameters": {
+			"forEachInput": {
+				"type": "array",
+				"defaultValue": [
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_customers_dataset.csv",
+						"file_name": "olist_customers_dataset.csv"
+					},
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_geolocation_dataset.csv",
+						"file_name": "olist_geolocation_dataset.csv"
+					},
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_order_items_dataset.csv",
+						"file_name": "olist_order_items_dataset.csv"
+					},
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_order_reviews_dataset.csv",
+						"file_name": "olist_order_reviews_dataset.csv"
+					},
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_orders_dataset.csv",
+						"file_name": "olist_orders_dataset.csv"
+					},
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_products_dataset.csv",
+						"file_name": "olist_products_dataset.csv"
+					},
+					{
+						"csv_relative_url": "BigDataProjectDE/refs/heads/main/olist_sellers_dataset.csv",
+						"file_name": "olist_sellers_dataset.csv"
+					}
+				]
+			}
+		},
 		"annotations": []
 	}
 }
