@@ -1,0 +1,17 @@
+{
+	"name": "Create View",
+	"properties": {
+		"content": {
+			"query": "CREATE SCHEMA gold1\nCREATE VIEW vw_gold_final\nAS\nSELECT \n        * \n        FROM\n        OPENROWSET(\n            BULK 'https://adeniyistorageaccount.blob.core.windows.net/olistdata/silver/',\n            FORMAT = 'PARQUET'\n        ) AS result1\n\nCREATE VIEW vw_gold_final2\nAS\nSELECT \n        * \n        FROM\n        OPENROWSET(\n            BULK 'https://adeniyistorageaccount.blob.core.windows.net/olistdata/silver/',\n            FORMAT = 'PARQUET'\n        ) AS result1 \n        WHERE seller_city = 'maringa';  \n\n        \n             ",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "olist",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

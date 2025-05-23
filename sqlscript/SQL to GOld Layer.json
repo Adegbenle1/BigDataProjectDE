@@ -1,0 +1,17 @@
+{
+	"name": "SQL to GOld Layer",
+	"properties": {
+		"content": {
+			"query": "--CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Adeniyi4851';\n--CREATE DATABASE SCOPED CREDENTIAL Adeniyi_Adegbenle WITH IDENTITY = 'Managed Identity';\n\nSELECT * FROM sys.database_credentials;\n\nCREATE EXTERNAL FILE FORMAT extfileformat WITH (\n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n);\n\nCREATE EXTERNAL DATA SOURCE GoldLayer WITH (\n    LOCATION = 'https://adeniyistorageaccount.dfs.core.windows.net/olistdata/Gold',\n    CREDENTIAL = Adeniyi_Adegbenle\n);\n\nCREATE EXTERNAL TABLE gold.finaltable WITH (\n        LOCATION = 'finalserving', -- Folder name inside Gold Layer\n        DATA_SOURCE = GoldLayer,\n        FILE_FORMAT = extfileformat\n) AS\nSELECT * FROM gold1.[vw_gold_final];\n\n\nSELECT * from gold.finaltable;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "olist",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
